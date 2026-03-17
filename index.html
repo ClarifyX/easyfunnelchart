@@ -1,9 +1,571 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <title>Easy Funnel Chart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Funnel Chart - 快速生成专业漏斗图</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+            background: #ffffff;
+            color: #1f2937;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #0066cc;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-text h1 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+        
+        .logo-text p {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin: 0;
+        }
+        
+        .export-btn {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .export-btn:hover {
+            background: #0052a3;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .export-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: calc(100vh - 180px);
+        }
+        
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: 1.5rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+        }
+        
+        .section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1f2937;
+            letter-spacing: -0.01em;
+        }
+        
+        .section-content {
+            flex: 1;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 1.5rem;
+            background: #ffffff;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        
+        thead {
+            background: #f9fafb;
+        }
+        
+        th {
+            text-align: left;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.15s ease;
+        }
+        
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+        
+        td {
+            padding: 0.75rem;
+        }
+        
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-family: inherit;
+            color: #1f2937;
+            background: #ffffff;
+            transition: all 0.15s ease;
+        }
+        
+        input[type="text"]::placeholder,
+        input[type="number"]::placeholder {
+            color: #d1d5db;
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+            background: #ffffff;
+        }
+        
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+        
+        .delete-btn:hover {
+            background: #dc2626;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .delete-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .add-row-btn {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            padding: 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            font-family: inherit;
+            margin-top: auto;
+        }
+        
+        .add-row-btn:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+        
+        .add-row-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 2rem;
+            overflow: auto;
+        }
+        
+        .chart-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        #funnelChart {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .chart-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.8125rem;
+            color: #6b7280;
+            letter-spacing: -0.01em;
+        }
+        
+        footer {
+            border-top: 1px solid #e5e7eb;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.8125rem;
+            background: #ffffff;
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f9fafb;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+    </style>
 </head>
 <body>
-  <h1>Hello Funnel Chart </h1>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">F</div>
+                <div class="logo-text">
+                    <h1>Easy Funnel Chart</h1>
+                    <p>快速生成专业漏斗图</p>
+                </div>
+            </div>
+            <button class="export-btn" id="exportBtn" onclick="exportChart()">↓ 保存为图片</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-grid">
+            <!-- 左侧：数据输入 -->
+            <div class="section">
+                <div class="section-title">数据输入</div>
+                <div class="section-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>事件</th>
+                                <th>参数</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td><input type="text" value="进入" class="event-name" onchange="updateChart()"></td>
+                                <td><input type="number" value="2000" class="event-value" onchange="updateChart()"></td>
+                                <td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="点击" class="event-name" onchange="updateChart()"></td>
+                                <td><input type="number" value="1009" class="event-value" onchange="updateChart()"></td>
+                                <td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" value="注册" class="event-name" onchange="updateChart()"></td>
+                                <td><input type="number" value="678" class="event-value" onchange="updateChart()"></td>
+                                <td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="add-row-btn" onclick="addRow()">+ 添加行</button>
+                </div>
+            </div>
+
+            <!-- 右侧：图表预览 -->
+            <div class="section">
+                <div class="section-title">漏斗图预览</div>
+                <div class="section-content chart-container" id="chartContainer">
+                    <div class="chart-wrapper">
+                        <svg id="funnelChart" width="100%" height="100%" viewBox="0 0 800 500" style="min-height: 300px;"></svg>
+                        <div class="chart-footer">easyfunnelchart.com</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Easy Funnel Chart © 2026 - 快速生成专业漏斗图</p>
+    </footer>
+
+    <script>
+        const colors = ['#0066CC', '#0052A3', '#003D7A', '#002E5C', '#001F3D'];
+        
+        function getData() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            return Array.from(rows).map(row => ({
+                name: row.querySelector('.event-name').value || '未命名',
+                value: parseInt(row.querySelector('.event-value').value) || 0
+            })).filter(item => item.value > 0);
+        }
+        
+        function updateChart() {
+            const data = getData();
+            const svg = document.getElementById('funnelChart');
+            svg.innerHTML = '';
+            
+            if (data.length === 0) {
+                svg.innerHTML = '<text x="400" y="250" text-anchor="middle" dy=".3em" fill="#9ca3af" font-size="16">请输入数据</text>';
+                return;
+            }
+            
+            const maxValue = Math.max(...data.map(d => d.value));
+            const chartWidth = 600;
+            const chartHeight = 45;
+            const gap = 15;
+            const startX = 100;  // 居中：(800 - 600) / 2 = 100
+            const startY = 40;
+            
+            let prevPoints = null;
+            
+            data.forEach((item, index) => {
+                const percentage = (item.value / maxValue) * 100;
+                const width = (chartWidth * percentage) / 100;
+                const x = startX + (chartWidth - width) / 2;
+                const y = startY + index * (chartHeight + gap);
+                
+                // 绘制飘带
+                if (prevPoints) {
+                    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    const d = `M ${prevPoints.x1} ${prevPoints.y1} Q ${(prevPoints.x1 + x) / 2} ${(prevPoints.y1 + y) / 2}, ${x} ${y} L ${x + width} ${y} Q ${(prevPoints.x2 + x + width) / 2} ${(prevPoints.y2 + y) / 2}, ${prevPoints.x2} ${prevPoints.y2} Z`;
+                    path.setAttribute('d', d);
+                    path.setAttribute('fill', 'rgba(0, 102, 204, 0.08)');
+                    path.setAttribute('stroke', 'none');
+                    svg.appendChild(path);
+                }
+                
+                // 绘制数据柱
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x);
+                rect.setAttribute('y', y);
+                rect.setAttribute('width', width);
+                rect.setAttribute('height', chartHeight);
+                rect.setAttribute('fill', colors[index % colors.length]);
+                rect.setAttribute('rx', '4');
+                rect.setAttribute('opacity', '0.95');
+                svg.appendChild(rect);
+                
+                // 左侧文本（事件名称）
+                const leftText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                leftText.setAttribute('x', x - 15);
+                leftText.setAttribute('y', y + chartHeight / 2);
+                leftText.setAttribute('text-anchor', 'end');
+                leftText.setAttribute('dy', '0.3em');
+                leftText.setAttribute('font-size', '14');
+                leftText.setAttribute('font-weight', '500');
+                leftText.setAttribute('fill', '#1f2937');
+                leftText.textContent = item.name;
+                svg.appendChild(leftText);
+                
+                // 右侧文本（百分比）
+                const rightText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                rightText.setAttribute('x', x + width + 15);
+                rightText.setAttribute('y', y + chartHeight / 2);
+                rightText.setAttribute('dy', '0.3em');
+                rightText.setAttribute('font-size', '14');
+                rightText.setAttribute('font-weight', '600');
+                rightText.setAttribute('fill', '#0066cc');
+                rightText.textContent = percentage.toFixed(1) + '%';
+                svg.appendChild(rightText);
+                
+                prevPoints = {
+                    x1: x,
+                    y1: y + chartHeight,
+                    x2: x + width,
+                    y2: y + chartHeight
+                };
+            });
+        }
+        
+        function addRow() {
+            const tbody = document.getElementById('tableBody');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" value="新事件" class="event-name" onchange="updateChart()"></td>
+                <td><input type="number" value="0" class="event-value" onchange="updateChart()"></td>
+                <td><button class="delete-btn" onclick="deleteRow(this)">删除</button></td>
+            `;
+            tbody.appendChild(row);
+            updateChart();
+        }
+        
+        function deleteRow(btn) {
+            btn.closest('tr').remove();
+            updateChart();
+        }
+        
+        function exportChart() {
+            const svg = document.getElementById('funnelChart');
+            
+            // 获取 SVG 的 viewBox
+            const viewBox = svg.getAttribute('viewBox');
+            const [, , vbWidth, vbHeight] = viewBox.split(' ').map(Number);
+            
+            // 创建新的 SVG，包含图表和文本
+            const exportSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            exportSvg.setAttribute('width', vbWidth);
+            exportSvg.setAttribute('height', vbHeight + 80);
+            exportSvg.setAttribute('viewBox', `0 0 ${vbWidth} ${vbHeight + 80}`);
+            exportSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            
+            // 添加白色背景
+            const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            bg.setAttribute('width', vbWidth);
+            bg.setAttribute('height', vbHeight + 80);
+            bg.setAttribute('fill', '#ffffff');
+            exportSvg.appendChild(bg);
+            
+            // 复制原 SVG 的所有内容
+            const svgClone = svg.cloneNode(true);
+            exportSvg.appendChild(svgClone);
+            
+            // 添加文本
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', vbWidth / 2);
+            text.setAttribute('y', vbHeight + 50);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '14');
+            text.setAttribute('fill', '#6b7280');
+            text.setAttribute('font-family', 'Inter, -apple-system, BlinkMacSystemFont, sans-serif');
+            text.textContent = 'easyfunnelchart.com';
+            exportSvg.appendChild(text);
+            
+            // 转换为 PNG
+            const svgData = new XMLSerializer().serializeToString(exportSvg);
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const scale = 2;
+            canvas.width = vbWidth * scale;
+            canvas.height = (vbHeight + 80) * scale;
+            
+            const img = new Image();
+            img.onload = () => {
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.scale(scale, scale);
+                ctx.drawImage(img, 0, 0);
+                
+                canvas.toBlob(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'funnel-chart.png';
+                    link.click();
+                    URL.revokeObjectURL(url);
+                });
+            };
+            
+            img.onerror = () => {
+                console.error('Failed to load SVG image');
+            };
+            
+            const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            img.src = URL.createObjectURL(blob);
+        }
+        
+        // 初始化
+        updateChart();
+    </script>
 </body>
 </html>
